@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/p5"></script>
+</head>
+<body>
+    
+<script>
+
+function Point(x,y){
+    this.x= x;
+    this.y= y;
+}
+
+Point.prototype.show = function(){
+    let clr = this.color || 'red';
+    fill(clr);
+    ellipse(this.x, this.y, 8);
+}
+
+let c, p1,p2,p3, currPoint;
+
+function setup(){
+   c = createCanvas(600,600);
+    p1 = new Point(200,0);
+    p2 = new Point(0,150);
+    p3 = new Point(-150,-100);
+}
+function draw(){
+    translate(width/2,height/2);
+    background(200);
+    
+    //drawGrid()
+
+    drawEdge(p1,p2)
+    drawEdge(p2,p3)
+    drawEdge(p3,p1)
+
+    p1.show()
+    p2.show()
+    p3.show()
+}
+
+function mouseMoved(){
+   x = mouseX - width / 2;
+   y = mouseY - height / 2;
+   if (( abs(x - p1.x) < 4 &&  abs(y - p1.y) < 4) ||
+      ( abs(x - p2.x) < 4 &&  abs(y - p2.y) < 4) ||
+      ( abs(x - p3.x) < 4 &&  abs(y - p3.y) < 4)) {
+    c.elt.style.cursor = 'pointer'
+   }
+   else {
+    c.elt.style.cursor = 'default'
+   }
+}
+
+function mousePressed(){
+   x = mouseX - width / 2;
+   y = mouseY - height / 2;
+   if ( abs(x - p1.x) < 4 &&  abs(y - p1.y) < 4) {
+    currPoint = p1;
+   } else if ( abs(x - p2.x) < 4 &&  abs(y - p2.y) < 4) {
+    currPoint = p2;
+   } else if ( abs(x - p3.x) < 4 &&  abs(y - p3.y) < 4) {
+    currPoint = p3;
+   }
+   else {
+       currPoint = null;
+   }
+}
+
+function mouseDragged() {
+  if (currPoint != null){
+      currPoint.x = mouseX - width / 2;
+      currPoint.y = mouseY - height / 2; 
+  }
+}
+
+function drawGrid(){
+    stroke('green')
+    line(-width,0, width, 0);
+    line(0,-height, 0, height);
+}
+
+function getCenterPoint(p1,p2){
+    return  new Point( (p2.x - p1.x) / 2 + p1.x , (p2.y - p1.y) / 2 + p1.y );
+}
+
+function drawAxis(p1,p2){
+    push();
+    let a = atan2(p2.y - p1.y, p2.x - p1.x); // * 180 / PI;
+    let p = getCenterPoint(p1,p2);
+    p.color = 'green';
+    translate(p.x,p.y);
+    rotate(a);
+    stroke('red');
+    line(0, -500 , 0,  500); 
+    pop();
+    p.show();
+}
+
+function drawEdge(p1,p2){
+    stroke('blue');
+    line(p1.x, p1.y, p2.x, p2.y);
+    drawAxis(p1,p2)
+}
+
+</script>
+
+</body>
+</html>
